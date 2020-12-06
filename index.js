@@ -20,7 +20,6 @@ const solver = require(path + `/script`);
 const text = fs.readFileSync(path + `/input.txt`)
     .toString()
     .split('\n')
-    .map(s => s.replace(/\r$/, ''))
-    .filter(s => s.length > 0);
+    .map(s => s.replace(/\r$/, ''));
 
 solver.solve(text);
