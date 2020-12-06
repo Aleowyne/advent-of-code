@@ -32,7 +32,7 @@ const nbValidPassport2 = input => {
   let validPassportFields = new Array();
 
   return input.reduce((sum, item) => {
-    // Lecture du passeport terminé
+    // Lecture du passeport terminée
     if (item === "") {
       let setFields = new Set(validPassportFields);
       setFields.delete("");
