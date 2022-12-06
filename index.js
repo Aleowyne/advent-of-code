@@ -5,8 +5,8 @@ let day = 1;
 
 const args = process.argv.slice(2);
 
-year = Number(args[0]);
-day = Number(args[1]);
+year = Number(args[0]) || 0;
+day = Number(args[1]) || 0;
 
 const path = `./${year}/Day ${day}`;
 
