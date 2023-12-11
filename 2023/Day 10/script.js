@@ -57,7 +57,7 @@ const solve = input => {
   console.log(part1(input));
 
   // Partie 2
-  // console.log(part2(input));
+  console.log(part2(input));
 }
 
 const part1 = (data) => {
@@ -68,7 +68,7 @@ const part1 = (data) => {
     const line = data[x].split("");
     map.push(line);
 
-    const y = line.findIndex(caracter => caracter === "S");
+    const y = line.indexOf("S");
 
     if (y !== -1) {
       xStart = x;
@@ -102,10 +102,84 @@ const part1 = (data) => {
   return max;
 };
 
+// Algo "Even-odd rule" : pour trouver si un point est dans un polygone
+const isPointInPath = (x, y, poly) => {
+  let find = false;
+  let j = poly.length - 1;
 
+  for (let i = 0; i < poly.length; i++) {
+    if (x === poly[i][0] && y === poly[i][1]) {
+      return true;
+    }
+
+    if ((poly[i][1] > y) !== (poly[j][1] > y)) {
+      const slope = (x - poly[i][0]) * (poly[j][1] - poly[i][1]) - (poly[j][0] - poly[i][0]) * (y - poly[i][1]);
+
+      if (slope === 0) {
+        return true;
+      }
+
+      if ((slope < 0) !== (poly[j][1] < poly[i][1])) {
+        find = !find;
+      }
+    }
+    j = i;
+  }
+
+  return find;
+}
 
 const part2 = (data) => {
+  const map = [];
+  let xStart, yStart, nbRow, nbCol, sum = 0;
 
+  for (let x = 0; x < data.length; x++) {
+    const line = data[x].split("");
+    map.push(line);
+
+    const y = line.indexOf("S");
+
+    if (y !== -1) {
+      xStart = x;
+      yStart = y;
+      nbRow = data.length;
+      nbCol = line.length;
+    }
+  }
+
+  const neighboors = [{ x: xStart, y: yStart, value: "S" }];
+  map[xStart][yStart] = 0;
+  const poly = [[xStart, yStart]];
+
+  for (const neighboor of neighboors) {
+    const directions = DIRECTIONS.find((direction) => direction.origin === neighboor.value).targets;
+
+    for (const [dirX, dirY, valueTarget] of directions) {
+      const row = neighboor.x + dirX;
+      const col = neighboor.y + dirY;
+
+      if (row >= 0 && row < nbRow
+        && col >= 0 && col < nbCol
+        && valueTarget === map[row][col]) {
+
+        neighboors.push({ x: row, y: col, value: map[row][col] });
+        map[row][col] = map[neighboor.x][neighboor.y] + 1;
+        poly.push([row, col]);
+        break;
+      }
+    }
+  }
+
+  for (let x = 0; x < nbRow; x++) {
+    for (let y = 0; y < nbCol; y++) {
+      if ((isNaN(map[x][y]) || map[x][y] === '7') && isPointInPath(x, y, poly)) {
+        map[x][y] = "I";
+        sum++;
+      }
+    }
+  }
+
+  return sum;
 };
 
 module.exports = { solve };
@@ -113,5 +187,5 @@ module.exports = { solve };
 /**
  * Résultats :
  * 1ère partie : 6842
- * 2ème partie : 
+ * 2ème partie : 393
  */
